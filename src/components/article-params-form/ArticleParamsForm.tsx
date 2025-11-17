@@ -16,30 +16,37 @@ import {
 	OptionType,
 	defaultArticleState,
 } from 'src/constants/articleProps';
+import clsx from 'clsx';
 
 type Props = {
-	state: ArticleStateType;
-	setState: React.Dispatch<React.SetStateAction<ArticleStateType>>;
+	articleSettings: ArticleStateType;
+	setArticleSettings: React.Dispatch<React.SetStateAction<ArticleStateType>>;
 };
 
-export const ArticleParamsForm = ({ state, setState }: Props) => {
-	const [isOpen, setOpen] = useState(false);
-	const [draft, setDraft] = useState<ArticleStateType>(state);
+export const ArticleParamsForm = ({
+	articleSettings,
+	setArticleSettings,
+}: Props) => {
+	const [isFormOpen, setFormOpen] = useState(false);
+	const [articleDraft, setArticleDraft] =
+		useState<ArticleStateType>(articleSettings);
 
 	useEffect(() => {
-		setDraft(state);
-	}, [state]);
-
-	const handleApply = () => setState(draft);
-	const handleReset = () => setState(defaultArticleState);
+		setArticleDraft(articleSettings);
+	}, [articleSettings]);
+	const handleApply = () => setArticleSettings(articleDraft);
+	const handleReset = () => setArticleSettings(defaultArticleState);
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={() => setOpen(!isOpen)} />
+			<ArrowButton
+				isOpen={isFormOpen}
+				onClick={() => setFormOpen(!isFormOpen)}
+			/>
 			<aside
-				className={`${styles.container} ${
-					isOpen ? styles.container_open : ''
-				}`}>
+				className={clsx(styles.container, {
+					[styles.container_open]: isFormOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={(e) => {
@@ -52,44 +59,44 @@ export const ArticleParamsForm = ({ state, setState }: Props) => {
 					<div className={styles.formContainer}>
 						<Select
 							options={fontFamilyOptions}
-							selected={draft.fontFamilyOption}
+							selected={articleDraft.fontFamilyOption}
 							onChange={(option: OptionType) =>
-								setDraft((s) => ({ ...s, fontFamilyOption: option }))
+								setArticleDraft((s) => ({ ...s, fontFamilyOption: option }))
 							}
 							title='Шрифт'
 						/>
 						<RadioGroup
 							name='fontSize'
 							options={fontSizeOptions}
-							selected={draft.fontSizeOption}
+							selected={articleDraft.fontSizeOption}
 							onChange={(option) =>
-								setDraft((s) => ({ ...s, fontSizeOption: option }))
+								setArticleDraft((s) => ({ ...s, fontSizeOption: option }))
 							}
 							title='Размер шрифта'
 						/>
 						<Select
 							options={fontColors}
-							selected={draft.fontColor}
+							selected={articleDraft.fontColor}
 							onChange={(option: OptionType) =>
-								setDraft((s) => ({ ...s, fontColor: option }))
+								setArticleDraft((s) => ({ ...s, fontColor: option }))
 							}
 							title='Цвет шрифта'
 						/>
 					</div>
 					<Select
 						options={backgroundColors}
-						selected={draft.backgroundColor}
+						selected={articleDraft.backgroundColor}
 						onChange={(option: OptionType) =>
-							setDraft((s) => ({ ...s, backgroundColor: option }))
+							setArticleDraft((s) => ({ ...s, backgroundColor: option }))
 						}
 						title='Фон'
 					/>
 
 					<Select
 						options={contentWidthArr}
-						selected={draft.contentWidth}
+						selected={articleDraft.contentWidth}
 						onChange={(option: OptionType) =>
-							setDraft((s) => ({ ...s, contentWidth: option }))
+							setArticleDraft((s) => ({ ...s, contentWidth: option }))
 						}
 						title='Ширина контента'
 					/>
