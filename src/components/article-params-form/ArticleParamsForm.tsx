@@ -3,7 +3,7 @@ import { Button } from 'src/ui/button';
 
 import styles from './ArticleParamsForm.module.scss';
 import { Text } from 'src/ui/text';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Select } from 'src/ui/select';
 import { RadioGroup } from 'src/ui/radio-group';
 import {
@@ -30,12 +30,32 @@ export const ArticleParamsForm = ({
 	const [isFormOpen, setFormOpen] = useState(false);
 	const [articleDraft, setArticleDraft] =
 		useState<ArticleStateType>(articleSettings);
+	const containerRef = useRef<HTMLElement | null>(null);
 
 	useEffect(() => {
 		setArticleDraft(articleSettings);
 	}, [articleSettings]);
 	const handleApply = () => setArticleSettings(articleDraft);
 	const handleReset = () => setArticleSettings(defaultArticleState);
+
+	useEffect(() => {
+		if (!isFormOpen) return;
+
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(event.target as Node)
+			) {
+				setFormOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [isFormOpen]);
 
 	return (
 		<>
@@ -44,6 +64,7 @@ export const ArticleParamsForm = ({
 				onClick={() => setFormOpen(!isFormOpen)}
 			/>
 			<aside
+				ref={containerRef}
 				className={clsx(styles.container, {
 					[styles.container_open]: isFormOpen,
 				})}>
